@@ -1,34 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pages and Layouts
 
-## Getting Started
+## Pages
 
-First, run the development server:
+-   페이지는 기본적으로 서버 구성 요소 이지만 클라이언트 구성 요소 로 설정할 수 있음 ('use client')
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+## Layout
+
+### Root Layout
+
+```
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   최상위 레이아웃 (필수)
+-   html, body 태그 포함
+-   페이지 라우터에서 \_app.js 및 \_document.js 파일을 대체
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Templates
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# Linking and Navigating
 
-## Learn More
+### 'id'로 스크롤
 
-To learn more about Next.js, take a look at the following resources:
+'#'해시를 사용해 라우팅 시 특정 위치로 스크롤 할 수 있음
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+<Link href="/banana#target">Settings</Link>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```tsx
+// banana page
+<section id="target">Target</section>
+```
 
-## Deploy on Vercel
+# Route Group
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   폴더 이름을 괄호로 묶어서 만듦 `(folderName)`
+-   폴더를 경로 그룹으로 표시해 page 폴더를 URL에 포함되지않도록 할 수 있음
+-   다중 Root Layout 만들때 사용 (ex. 권한 별 페이지 레이아웃)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Dynamic Routes
+
+-   폴더 이름을 대괄호로 묶어서 만듦 `[folderName]`
+
+## 정적 매개 변수 생성 `(generateStaticParams)`
+
+```tsx
+export async function generateStaticParams() {
+	const posts = await fetch('https://.../posts').then((res) => res.json());
+
+	return posts.map((post) => ({
+		slug: post.slug,
+	}));
+}
+```
+
+# 로딩 UI와 스트리밍
